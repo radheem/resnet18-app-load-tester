@@ -38,8 +38,15 @@ class MyLoadTester(BarAzmoon):
             return False  # Indicate failure
 
 
-if __name__ == "__main__":#-----10-----------------20-------------25
-    workload = [1,2,3,4,5,6,8,9,10,1,2,3,4,5,6,8,9,10,20,20,30,30,30,40,]  
+if __name__ == "__main__":
+    first_250_secs = [20] * 250
+    last_100_secs = [20] * 100
+    set1 = [40] * 25
+    set2 = [60] * 25
+    set3 = [70] * 25
+    set4 = [75] * 150
+    set5 = [40] * 50
+    workload = [*first_250_secs, *set1, *set2, *set3, *set4, *set5,*last_100_secs]  
     image_folder = './data/sampleImages'
     endpoint = 'http://127.0.0.1:80/predict'
 
