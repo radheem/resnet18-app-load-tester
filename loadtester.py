@@ -39,7 +39,7 @@ class MyLoadTester(BarAzmoon):
 
 
 if __name__ == "__main__":#-----10-----------------20-------------25
-    workload = [1,2,3,4,5,6,8,9,10,1,2,3,4,5,6,8,9,10,20,20,30,30,30,40,]  # Example workload, replace with your actual workload
+    workload = [1,2,3,4,5,6,8,9,10,1,2,3,4,5,6,8,9,10,20,20,30,30,30,40,]  
     image_folder = './data/sampleImages'
     endpoint = 'http://127.0.0.1:80/predict'
 
