@@ -52,8 +52,6 @@ class BarAzmoon:
     async def predict(self, delay, session):
         await asyncio.sleep(delay)
         data_id, data = self.get_request_data()
-        print(f"Sending data id: {data_id}")
-        print(f"Data: {type(data)}")
         try:
             async with getattr(session, self.http_method)(self.endpoint, data={'image':data}) as response:
                 response = await response.json(content_type=None)
