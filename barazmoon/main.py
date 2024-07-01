@@ -12,6 +12,8 @@ class BarAzmoon:
         self.endpoint = endpoint
         self.http_method = http_method
         self.__workload = (rate for rate in workload)
+        self.total_work = len(workload)
+        self.i_am_at = 0
         self.__counter = 0
         self.kwargs = kwargs
         self.__success_counter = Value('i', 0)
@@ -21,7 +23,8 @@ class BarAzmoon:
         for rate in self.__workload:
             total_seconds += 1
             self.__counter += rate
-            generator_process = Process(target=self.target_process, args=(rate, self.__success_counter))
+            self.i_am_at += 1
+            generator_process = Process(target=self.target_process, args=(rate, self.__success_counter,self.i_am_at))
             generator_process.daemon = True
             generator_process.start()
             active_children()
@@ -34,20 +37,23 @@ class BarAzmoon:
 
         return self.__counter, self.__success_counter.value
 
-    def target_process(self, count, success_counter: Value):
-        count = asyncio.run(self.generate_load_for_second(count))
+    def target_process(self, count, success_counter: Value,i_am_at):
+        count = asyncio.run(self.generate_load_for_second(count,i_am_at))
         with success_counter.get_lock():
             success_counter.value += count
 
-    async def generate_load_for_second(self, count):
+    async def generate_load_for_second(self, count,i_am_at):
         async with ClientSession(connector=TCPConnector(limit=0)) as session:
             delays = np.cumsum(np.random.exponential(1 / (count * 1.5), count))
             tasks = []
+            print(f"Generating {i_am_at} of {self.total_work} requests")
             for i in range(count):
                 task = asyncio.create_task(self.predict(delays[i], session))
                 tasks.append(task)
             results = await asyncio.gather(*tasks)
-            return sum(results)
+            succ_sum = sum(results)
+            print(f"Success count: {succ_sum} of {count}") 
+            return succ_sum
     
     async def predict(self, delay, session):
         await asyncio.sleep(delay)
